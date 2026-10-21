@@ -1,4 +1,4 @@
-import { Router, Routes } from "express";
+import { Router } from "express";
 import { changePassword, login, session } from "../controllers/authController.js";
 import { protect } from "../middleware/auth.js";
 
