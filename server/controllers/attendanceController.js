@@ -1,11 +1,8 @@
-
+import Attendance from "../models/Attendance.js";
+import Employee from "../models/Employee.js";
 
 // clock in/out for employee
-
-import Attendance from "../models/Attendance";
-import Employee from "../models/Employee";
-
-//POST /api/attendance
+// POST /api/attendance
 export const clockInOut = async (req, res) => {
     try {
         const session = req.session;
