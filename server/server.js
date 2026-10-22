@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import { setServers } from "node:dns";
 import multer from "multer";
 import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
@@ -30,8 +29,6 @@ app.use("/api/attendance", attendanceRouter)
 app.use("/api/leave", leaveRouter)
 app.use("/api/payslips", payslipRouter)
 app.use("/api/dashboard", dashboardRouter)
-
-setServers([process.env.MONGODB_DNS_SERVER || "1.1.1.1"]);
 
 await connectDB()
 app.listen(PORT, ()=> console.log(`Server running on port ${PORT}`))
