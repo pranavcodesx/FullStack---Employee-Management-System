@@ -48,7 +48,7 @@ export const createLeave = async (req, res) => {
         return res.json({ success: true, data: leave });
 
     } catch (error) {
-        return res.json(500).json({ error: "Failed" });
+        return res.status(500).json({ error: "Failed" });
     }
 }
 
@@ -88,7 +88,7 @@ export const getLeaves = async (req, res) => {
             })
         }
     } catch (error) {
-        return res.json(500).json({ error: "Failed" });
+        return res.status(500).json({ error: "Failed" });
     }
 }
 
@@ -105,6 +105,6 @@ export const updateLeaveStatus = async (req, res) => {
         const leave = await LeaveApplication.findByIdAndUpdate(req.params.id, {status}, {returnDocument: "after"})
         return res.json({success: true, data: leave})
     } catch (error) {
-        return res.json(500).json({ error: "Failed" });
+        return res.status(500).json({ error: "Failed" });
     }
 }

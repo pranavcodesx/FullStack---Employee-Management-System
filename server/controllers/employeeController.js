@@ -10,7 +10,7 @@ export const getEmployees = async (req, res) => {
         const where = {};
         if(department) where.department = department;
 
-        const employees = (await Employee.find(where)).toSorted({createdAt: -1}).populate("userId", "email role").lean();
+        const employees = await Employee.find(where).sort({createdAt: -1}).populate("userId", "email role").lean();
 
         const result = employees.map((emp)=>({
             ...emp,
@@ -72,13 +72,13 @@ export const createEmployee = async (req, res) => {
 export const updateEmployee = async (req, res) => {
     try {
         const {id} = req.params;
-        const {firstName, lastName, email, phone, position, department, basicSalary, allowances, deductions, password, role, bio, employmentStatus} = req.body;
+        const {firstName, lastName, email, phone, position, department, basicSalary, allowances, deductions, joinDate, password, role, bio, employmentStatus} = req.body;
 
         const employee = await Employee.findById(id);
         if(!employee) return res.status(404).json({error: "Employee not found"})
 
 
-        await Employee.findByIdAndUpdate(id, {
+        const updatedEmployee = await Employee.findByIdAndUpdate(id, {
             firstName,
             lastName,
             email,
@@ -91,7 +91,7 @@ export const updateEmployee = async (req, res) => {
             joinDate: new Date(joinDate),
             employmentStatus: employmentStatus || "ACTIVE",
             bio: bio || "",
-        })
+        }, {new: true, runValidators: true})
 
         // Update user record
         const userUpdate = {email}
@@ -99,13 +99,14 @@ export const updateEmployee = async (req, res) => {
         if(password) userUpdate.password = await bcrypt.hash(password, 10);
         await User.findByIdAndUpdate(employee.userId, userUpdate)
 
-        return res.json({success: true, employee})
+        return res.json({success: true, employee: updatedEmployee})
 
     } catch (error) {
         if(error.code === 11000){
             return res.status(400).json({error: "Email already exists"})
         }
-        return res.status(500).json({ error: "Failed to create employee"});
+        console.error("Update employee error:", error)
+        return res.status(500).json({ error: "Failed to update employee"});
     }
 }
 

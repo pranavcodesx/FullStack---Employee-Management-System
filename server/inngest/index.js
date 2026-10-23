@@ -1,4 +1,4 @@
-import { cron, Inngest } from "inngest";
+import { Inngest } from "inngest";
 import Attendance from "../models/Attendance.js";
 import Employee from "../models/Employee.js";
 import LeaveApplication from "../models/LeaveApplication.js";
@@ -98,7 +98,14 @@ const attendanceReminderCron = inngest.createFunction(
   async ({ step }) => {
     // Step 1: Get todays date range (IST)
     const today = await step.run("get-today-date", ()=>{
-        const startUTC = new Date(new Date().toLocaleDateString("en-CA", {timeZone: "Asia/Kolkata"}) + "T00:00:00 + 05:30");
+        const dateParts = new Intl.DateTimeFormat("en-US", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        }).formatToParts(new Date());
+        const date = Object.fromEntries(dateParts.map(({type, value}) => [type, value]));
+        const startUTC = new Date(Date.UTC(date.year, date.month - 1, date.day) - (5 * 60 + 30) * 60 * 1000);
         const endUTC = new Date(startUTC.getTime() + 24 * 60 * 60 * 1000);
         return {startUTC: startUTC.toISOString(), endUTC: endUTC.toISOString()}
     })
@@ -137,9 +144,8 @@ const attendanceReminderCron = inngest.createFunction(
         // Step 6: Send reminder emails
         if(absentEmployees.length > 0){
             await step.run("send-reminder-emails", async () => {
-                const emailPromises = absentEmployees.map((emp)=> {
-                    // Send email
-                    sendEmail({
+                const emailPromise = absentEmployees.map((emp)=> {
+                     sendEmail({
                         to: emp.email,
                         subject: `Attendance Reminder - Please Mark Your Attendance`,
                         body: `<div style="max-width: 600px; font-family: Arial, sans-serif;">
@@ -157,6 +163,7 @@ const attendanceReminderCron = inngest.createFunction(
                 })
             })
         }
+            await Promise.all(emailPromises)
             return {totalActive: activeEmployees.length, onLeave: onLeaveIds.length, checkedIn: checkedInIds.length, absent: absentEmployees.length}
     }
 );
