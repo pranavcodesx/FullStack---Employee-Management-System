@@ -2,6 +2,8 @@ import { CalendarDays, FileText, Loader2, Send, X } from 'lucide-react';
 import { useState } from 'react'
 import api from '../../api/axios';
 import toast from 'react-hot-toast';
+import Select from '../Select'
+import Dialog from '../Dialog'
 
 const ApplyLeaveModal = ({open, onClose, onSuccess}) => {
 
@@ -32,73 +34,79 @@ const ApplyLeaveModal = ({open, onClose, onSuccess}) => {
     if(!open) return null
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm' onClick={onClose}>
-
-      <div className='relative bg-white rounded-2xl shadow-2xl w-full max-w-lg animate-fade-in' onClick={(e)=>e.stopPropagation()}>
-            {/* ----- Header ----- */}
-            <div className='flex items-center justify-between p-6 pb-0'>
-                <div>
-                    <h2 className='text-lg font-semibold text-slate-800'>Apply for Leave</h2>
-                    <p className='text-sm text-slate-400 mt-0.5'>Submit your leave request for approval</p>
+    <Dialog titleId='apply-leave-title' onClose={()=> !loading && onClose()}>
+            <div className='flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6'>
+                <div className='flex items-center gap-3'>
+                    <span className='flex size-10 items-center justify-center rounded-xl bg-violet-50 text-violet-600 ring-1 ring-inset ring-violet-100'>
+                        <CalendarDays size={19}/>
+                    </span>
+                    <div>
+                        <h2 id='apply-leave-title' className='font-semibold text-slate-900'>Apply for leave</h2>
+                        <p className='mt-0.5 text-xs text-slate-500'>Submit a request for your manager to review</p>
+                    </div>
                 </div>
-                <button onClick={onClose} className='p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600'>
+                <button type='button' aria-label='Close leave request form' disabled={loading} onClick={onClose} className='rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50'>
                     <X className='w-5 h-5'/>
                 </button>
             </div>
-             {/* ----- Form ----- */}
-            <form onSubmit={handleSubmit} className='p-6 space-y-5'>
+            <form onSubmit={handleSubmit} className='space-y-5 p-5 sm:p-6'>
                 {/* ----- Leave Type ----- */}
                 <div>
-                    <label className='flex items-center gap-2 text-sm font-medium text-slate-700 mb-2'>
+                    <label htmlFor='leave-type' className='mb-2 flex items-center gap-2 text-sm font-medium text-slate-700'>
                         <FileText className='w-4 h-5 text-slate-400'/>
                         Leave Type
                     </label>
-                    <select name='type' required>
-                        <option value="SICK">Sick Leave</option>
-                        <option value="CASUAL">Casual Leave</option>
-                        <option value="ANNUAL">Annual Leave</option>
-                    </select>
+                    <Select
+                        id='leave-type'
+                        name='type'
+                        required
+                        defaultValue='SICK'
+                        options={[
+                            { value: 'SICK', label: 'Sick leave' },
+                            { value: 'CASUAL', label: 'Casual leave' },
+                            { value: 'ANNUAL', label: 'Annual leave' },
+                        ]}
+                    />
                 </div>
 
                 {/* ----- Duration ----- */}
                 <div>
-                    <label className='flex items-center gap-2 text-sm font-medium text-slate-700 mb-2'>
+                    <label className='mb-2 flex items-center gap-2 text-sm font-medium text-slate-700'>
                         <CalendarDays className='w-4 h-5 text-slate-400'/>
                         Duration
                     </label>
                     <div className='grid grid-cols-2 gap-4'>
                         <div>
-                            <span className='block text-xs text-slate-400 mb-1'>From</span>
-                            <input type='date' name='startDate' required min={minDate} />
+                            <label htmlFor='leave-start-date' className='mb-1 block text-xs font-medium text-slate-500'>From</label>
+                            <input id='leave-start-date' type='date' name='startDate' required min={minDate} />
                         </div>
                         <div>
-                            <span className='block text-xs text-slate-400 mb-1'>To</span>
-                            <input type='date' name='endDate' required min={minDate} />
+                            <label htmlFor='leave-end-date' className='mb-1 block text-xs font-medium text-slate-500'>To</label>
+                            <input id='leave-end-date' type='date' name='endDate' required min={minDate} />
                         </div>
                     </div>
                 </div>
 
                 {/* ----- Reason ----- */}
                 <div>
-                    <label className='flex items-center gap-2 text-sm font-medium text-slate-700 mb-2'>
+                    <label htmlFor='leave-reason' className='mb-2 flex items-center gap-2 text-sm font-medium text-slate-700'>
                         Reason
                     </label>
-                    <textarea name='reason' required rows={3} className='resize-none' placeholder='Briefly describe why you need this leave...' />
+                    <textarea id='leave-reason' name='reason' required rows={3} className='resize-none' placeholder='Briefly describe why you need this leave...' />
                 </div>
 
                 {/* ----- Buttons ----- */}
-                <div className='flex gap-3 pt-2'>
-                    <button onClick={onClose} type='button' className='btn-secondary flex-1'>
+                <div className='flex flex-col-reverse gap-3 border-t border-slate-100 pt-4 sm:flex-row'>
+                    <button onClick={onClose} type='button' className='btn-secondary flex-1 rounded-xl' disabled={loading}>
                         Cancel
                     </button>
-                    <button disabled={loading} type='submit' className='btn-primary flex-1 flex items-center justify-center gap-2'>
+                    <button disabled={loading} type='submit' className='btn-primary flex flex-1 items-center justify-center gap-2 rounded-xl'>
                         {loading ? <Loader2 className='w-4 h-4 animate-spin'/> : <Send className='w-4 h-4'/>}
                         {loading ? "Submitting..." : "Submit"}
                     </button>
                 </div>
             </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }
 
