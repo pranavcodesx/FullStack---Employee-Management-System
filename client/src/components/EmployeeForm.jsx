@@ -4,6 +4,7 @@ import { Loader2Icon } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import api from "../api/axios"
 import toast from "react-hot-toast"
+import Select from "./Select"
 
 
 const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
@@ -32,10 +33,10 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
         }
     }
   return (
-   <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl animate-fade-in">
+   <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-5 animate-fade-in">
     {/* Personal Information */}
-    <div className="card p-5 sm:p-6">
-        <h3 className="font-medium mb-6 pb-4 border-b border-slate-100">Personal Information</h3>
+   <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/2 sm:p-6">
+       <h3 className="mb-5 border-b border-slate-100 pb-4 text-sm font-semibold text-slate-900">Personal information</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-slate-700">
             <div>
                 <label className="block mb-2">First Name</label>
@@ -63,19 +64,21 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
     </div>
 
     {/* Employment Details */}
-    <div className="card p-5 sm:p-6">
-        <h3 className="text-base font-medium text-slate-900 mb-6 pb-4 border-b border-slate-100">Employee Details</h3>
+    <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/2 sm:p-6">
+        <h3 className="mb-5 border-b border-slate-100 pb-4 text-sm font-semibold text-slate-900">Employment details</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-slate-700">
             <div>
-                <label className="block mb-2">Department</label>
-                <select name="department" defaultValue={initialData?.department || ""}>
-                    <option value="">Select Department</option>
-                    {DEPARTMENTS.map((deptName)=>(
-                        <option key={deptName} value={deptName}>
-                            {deptName}
-                        </option>
-                    ))}
-                </select>
+                <label htmlFor="employee-department" className="mb-2 block">Department</label>
+                <Select
+                    name="department"
+                    id="employee-department"
+                    defaultValue={initialData?.department || ""}
+                    placeholder="Select department"
+                    options={[
+                        { value: "", label: "Select department" },
+                        ...DEPARTMENTS.map((deptName) => ({ value: deptName, label: deptName })),
+                    ]}
+                />
             </div>
             <div>
                 <label className="block mb-2">Position</label>
@@ -95,12 +98,16 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
             </div>
             {isEditMode && (
                 <div>
-                 <label className="block mb-2">Status</label>
-                <select name="employmentStatus" defaultValue={initialData?.employmentStatus}>
-                    <option value="ACTIVE">Active</option>
-                    <option value="INACTIVE">Inactive</option>
-
-                </select>
+                 <label htmlFor="employee-status" className="mb-2 block">Status</label>
+                <Select
+                    name="employmentStatus"
+                    id="employee-status"
+                    defaultValue={initialData?.employmentStatus || "ACTIVE"}
+                    options={[
+                        { value: "ACTIVE", label: "Active" },
+                        { value: "INACTIVE", label: "Inactive" },
+                    ]}
+                />
             </div>
             )}
 
@@ -109,8 +116,8 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
     </div>
 
     {/* Account Setup */}
-     <div className="card p-5 sm:p-6">
-        <h3 className="text-base font-medium text-slate-900 mb-6 pb-4 border-b border-slate-100">Account Setup</h3>
+     <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/2 sm:p-6">
+        <h3 className="mb-5 border-b border-slate-100 pb-4 text-sm font-semibold text-slate-900">Account setup</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-slate-700">
             <div className="sm:col-span-2">
                 <label className="block mb-2">Work Email</label>
@@ -129,12 +136,16 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
             </div> 
              )}
              <div>
-                <label className="block mb-2">System Role</label>
-                <select name="role" defaultValue={initialData?.user?.role || "EMPLOYEE"}>
-                    <option value="EMPLOYEE">Employee</option>
-                    <option value="ADMIN">Admin</option>
-
-                </select>
+                <label htmlFor="employee-role" className="mb-2 block">System role</label>
+                <Select
+                    name="role"
+                    id="employee-role"
+                    defaultValue={initialData?.user?.role || "EMPLOYEE"}
+                    options={[
+                        { value: "EMPLOYEE", label: "Employee" },
+                        { value: "ADMIN", label: "Admin" },
+                    ]}
+                />
             </div>
 
         </div>
@@ -143,10 +154,10 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
 
     {/* Buttons */}
     <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
-        <button type="button" className="btn-secondary" onClick={()=>(onCancel ? onCancel() : NavigateEvent(-1))}>
+        <button type="button" className="btn-secondary rounded-xl" onClick={()=>(onCancel ? onCancel() : navigate(-1))}>
             Cancel
         </button>
-        <button type="submit" disabled={loading} className="btn-primary flex items-center justify-center">
+        <button type="submit" disabled={loading} className="btn-primary flex items-center justify-center rounded-xl">
             {loading && <Loader2Icon className="w-4 h-4 mr-2 animate-spin"/>}
             {isEditMode ? "Update Employee" : "Create Employee"}
         </button>

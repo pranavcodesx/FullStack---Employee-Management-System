@@ -108,6 +108,28 @@
     }
 }
 
+@keyframes dropdownIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-dropdown-in {
+    animation: dropdownIn 160ms ease-out both;
+    transform-origin: top center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-dropdown-in {
+        animation-duration: 1ms;
+    }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 6px;

@@ -1,5 +1,5 @@
 import { Loader2, Save, User } from 'lucide-react';
-import React, { useState } from 'react'
+import { useState } from 'react'
 import api from '../api/axios';
 
 const ProfileForm = ({initialData, onSuccess}) => {
@@ -25,9 +25,9 @@ const ProfileForm = ({initialData, onSuccess}) => {
     }
 
   return (
-    <form onSubmit={handleSubmit} className='card p-5 sm:p-6 mb-6'>
-        <h2 className='text-base font-medium text-slate-900 mb-6 pb-4 border-b border-slate-100 flex items-center gap-2'>
-           <User className='w-5 h-5 text-slate-400'/> Public Profile
+    <form onSubmit={handleSubmit} className='mb-6 max-w-3xl rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm shadow-slate-900/2.5 sm:p-6'>
+        <h2 className='mb-6 flex items-center gap-2 border-b border-slate-100 pb-4 text-base font-semibold text-slate-900'>
+           <User className='w-5 h-5 text-indigo-500'/> Public profile
         </h2>
 
         {error && (
@@ -47,22 +47,22 @@ const ProfileForm = ({initialData, onSuccess}) => {
         <div className='space-y-5'>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div>
-                    <label className='block text-sm font-medium text-slate-700 mb-2'>Name</label>
+                    <label className='mb-2 block text-sm font-medium text-slate-700'>Name</label>
                     <input disabled value={`${initialData.firstName} ${initialData.lastName}`} className='bg-slate-50 text-slate-400 cursor-not-allowed' />
                 </div>
 
                 <div>
-                    <label className='block text-sm font-medium text-slate-700 mb-2'>Email</label>
-                    <input disabled value={initialData.email} className='bg-slate-50 text-slate-400 cursor-not-allowed"' />
+                    <label className='mb-2 block text-sm font-medium text-slate-700'>Email</label>
+                    <input disabled value={initialData.email} className='cursor-not-allowed bg-slate-50 text-slate-400' />
                 </div>
                 
                 <div className='sm:col-span-2'>
-                    <label className='block text-sm font-medium text-slate-700 mb-2'>Position</label>
-                    <input disabled value={initialData.position} className='bg-slate-50 text-slate-400 cursor-not-allowed"' />
+                    <label className='mb-2 block text-sm font-medium text-slate-700'>Position</label>
+                    <input disabled value={initialData.position || '—'} className='cursor-not-allowed bg-slate-50 text-slate-400' />
                 </div>
             </div>
             <div>
-                <label className='block text-sm font-medium text-slate-700 mb-2'>Bio</label>
+                <label className='mb-2 block text-sm font-medium text-slate-700'>Bio</label>
                 <textarea disabled={initialData.isDeleted} name='bio' defaultValue={initialData.bio || ""} 
                 placeholder='Write a brief bio...' className={`resize-none ${initialData.isDeleted ? "bg-slate-50 text-slate-400 cursor-not-allowed" : ""}`} />
                 <p className='text-xs text-slate-400 mt-1.5'>This will be displayed on your profile.</p>
